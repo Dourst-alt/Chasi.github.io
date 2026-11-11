@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Часы "Ч" — Донесения</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #0a0e14;
+            color: #e3eaf0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 12px;
+        }
+
+        .app-card {
+            max-width: 580px;
+            width: 100%;
+            background: #141b24;
+            border-radius: 36px;
+            padding: 20px 16px 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a3542;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #b0d4ff, #6fa3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .astro-badge {
+            font-size: 11px;
+            background: #1e2a36;
+            padding: 4px 10px;
+            border-radius: 40px;
+            color: #8aa9c9;
+            border: 1px solid #2d3d4d;
+        }
+
+        .time-block {
+            background: #0f161e;
+            border-radius: 20px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #26323f;
+        }
+
+        .time-block .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6d8aa8;
+            text-align: center;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .time-display .main-time {
+            font-size: 32px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #d6ecff;
+        }
+
+        .time-display .alt-time {
+            font-size: 14px;
+            color: #5b7b9a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            background: #101a24;
+            padding: 10px 8px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #283542;
+        }
+
+        .form-grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background: #101a24;
+            padding: 10px 8px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #283542;
+        }
+
+        .form-grid-full {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            background: #101a24;
+            padding: 10px 8px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #283542;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .form-group label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #6e8aa8;
+            text-align: center;
+        }
+
+        .form-group input {
+            background: #0a121c;
+            border: 1px solid #2b3d50;
+            border-radius: 10px;
+            padding: 6px 2px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #d4e8ff;
+            outline: none;
+            width: 100%;
+        }
+
+        .form-group input:focus {
+            border-color: #4d8cff;
+            box-shadow: 0 0 0 3px rgba(60, 130, 255, 0.2);
+        }
+
+        .btn {
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 40px;
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-set {
+            background: linear-gradient(135deg, #2a4b6e, #1c334b);
+            border: 1px solid #3b5f82;
+            width: 100%;
+        }
+
+        .btn-add-jump {
+            background: linear-gradient(135deg, #4a6b3a, #2d4a1f);
+            border: 1px solid #5a8a3f;
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(145deg, #3a3a3a, #1f1f1f);
+            border: none;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #b0b0b0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 3px solid #0f0f0f;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .btn-reset:active {
+            transform: translateY(3px);
+            border-bottom-width: 1px;
+        }
+
+        .chplus-block {
+            background: #101a24;
+            border-radius: 16px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #2a3b4b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .chplus-block .label {
+            font-size: 12px;
+            color: #89b0d4;
+            font-weight: 500;
+        }
+
+        .chplus-block .value {
+            font-size: 24px;
+            font-weight: 500;
+            color: #ffd966;
+            background: #0b141e;
+            padding: 0 14px;
+            border-radius: 30px;
+            border: 1px solid #5a4a2a;
+        }
+
+        .jump-input-block {
+            background: #101a24;
+            border-radius: 16px;
+            padding: 10px 8px;
+            margin-bottom: 10px;
+            border: 1px solid #283946;
+        }
+
+        .jump-input-block .label {
+            font-size: 11px;
+            color: #89b0d4;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .jump-section-title {
+            font-size: 9px;
+            color: #6e8aa8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .jump-input-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .jump-input-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .jump-input-grid .form-group label,
+        .jump-input-grid-3 .form-group label {
+            font-size: 8px;
+        }
+
+        .jump-input-grid .form-group input,
+        .jump-input-grid-3 .form-group input {
+            padding: 5px 2px;
+            font-size: 13px;
+        }
+
+        .jump-list-block {
+            background: #101a24;
+            border-radius: 16px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #2a3b4b;
+        }
+
+        .jump-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .jump-list-header .label {
+            font-size: 12px;
+            color: #89b0d4;
+            font-weight: 500;
+        }
+
+        .jump-list {
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .jump-list-empty {
+            text-align: center;
+            color: #5b7b9a;
+            font-size: 11px;
+            padding: 8px;
+        }
+
+        .jump-list-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: #0b141f;
+            border: 1px solid #213141;
+            border-radius: 10px;
+            padding: 6px 10px;
+            font-size: 11px;
+            position: relative;
+        }
+
+        .jump-list-item .ji-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .jump-list-item .ji-num {
+            color: #6d8aa8;
+            font-weight: 600;
+        }
+
+        .jump-list-item .ji-when {
+            color: #b0cef0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .jump-list-item .ji-shift {
+            color: #ffd966;
+            font-weight: 600;
+        }
+
+        .jump-list-item .ji-op {
+            color: #6aaa6a;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .jump-list-item .ji-chplus {
+            color: #89b0d4;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn-del-jump {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: linear-gradient(135deg, #4a2a2a, #3a1a1a);
+            border: 1px solid #5a3a3a;
+            padding: 2px 6px;
+            font-size: 10px;
+            color: white;
+            cursor: pointer;
+            border-radius: 30px;
+        }
+
+        .btn-del-jump:active {
+            transform: scale(0.95);
+        }
+
+        .astro-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0b141f;
+            padding: 6px 12px;
+            border-radius: 30px;
+            border: 1px solid #213141;
+            color: #5f84a8;
+            font-size: 12px;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .astro-block .astro-time {
+            font-weight: 500;
+            color: #b0cef0;
+        }
+
+        .badge-small {
+            background: #1f3142;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            color: #7da3cc;
+        }
+
+        .events-section {
+            margin-top: 12px;
+            border-top: 2px solid #2a3542;
+            padding-top: 12px;
+        }
+
+        .events-section h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #b0d4ff;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-form {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .event-form input {
+            flex: 2;
+            min-width: 100px;
+            background: #0a121c;
+            border: 1px solid #2b3d50;
+            border-radius: 10px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: #d4e8ff;
+            outline: none;
+        }
+
+        .event-form .event-time {
+            display: flex;
+            gap: 4px;
+            flex: 2;
+            min-width: 120px;
+        }
+
+        .event-form .event-time input {
+            flex: 1;
+            min-width: 40px;
+            background: #0a121c;
+            border: 1px solid #2b3d50;
+            border-radius: 10px;
+            padding: 6px 4px;
+            font-size: 13px;
+            color: #d4e8ff;
+            text-align: center;
+            outline: none;
+        }
+
+        .event-form .event-time input:focus {
+            border-color: #4d8cff;
+            box-shadow: 0 0 0 3px rgba(60, 130, 255, 0.2);
+        }
+
+        .event-form .event-time label {
+            font-size: 9px;
+            color: #6d8aa8;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-add-event {
+            background: linear-gradient(135deg, #4a6b8a, #2a4b6a);
+            border: 1px solid #5a7a9a;
+            padding: 6px 16px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .events-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f161e;
+            border: 1px solid #1f2a35;
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+        }
+
+        .event-item.done {
+            border-color: #1f6b3e;
+            background: #0f1f16;
+            opacity: 0.7;
+        }
+
+        .event-item.done .event-name {
+            text-decoration: line-through;
+            color: #6d8aa8;
+        }
+
+        .event-info {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .event-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #d6ecff;
+        }
+
+        .event-days {
+            font-size: 11px;
+            color: #8aa9c9;
+        }
+
+        .event-days span {
+            color: #ffd966;
+            font-weight: 600;
+        }
+
+        .event-deadline {
+            font-size: 10px;
+            color: #5b7b9a;
+        }
+
+        .event-deadline span {
+            color: #b0cef0;
+        }
+
+        .event-status {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 16px;
+            margin: 0 6px;
+            white-space: nowrap;
+        }
+
+        .event-status.pending {
+            background: #2a3a2a;
+            color: #8aaa6a;
+        }
+
+        .event-status.done-status {
+            background: #1a3a2a;
+            color: #6aaa6a;
+        }
+
+        .btn-delete-event {
+            background: linear-gradient(135deg, #4a2a2a, #3a1a1a);
+            border: 1px solid #5a3a3a;
+            padding: 3px 8px;
+            font-size: 10px;
+            color: white;
+            cursor: pointer;
+            border-radius: 30px;
+        }
+
+        .btn-delete-event:active {
+            transform: scale(0.95);
+        }
+
+        .events-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #6d8aa8;
+            padding: 6px 4px;
+            border-top: 1px solid #1f2a35;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .events-stats .done-count {
+            color: #6aaa6a;
+        }
+        .events-stats .pending-count {
+            color: #8aaa6a;
+        }
+
+        .report-section {
+            margin-top: 12px;
+            border-top: 2px solid #2a3542;
+            padding-top: 12px;
+        }
+
+        .report-section h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #b0d4ff;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .report-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-report {
+            background: linear-gradient(135deg, #4a6b3a, #2d4a1f);
+            border: 1px solid #5a8a3f;
+            padding: 4px 14px;
+            font-size: 11px;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #3a4a6a, #1a2a4a);
+            border: 1px solid #4a5a7a;
+            padding: 4px 14px;
+            font-size: 11px;
+        }
+
+        .btn-word {
+            background: linear-gradient(135deg, #2a4a6a, #1a3a5a);
+            border: 1px solid #3a5a7a;
+            padding: 4px 14px;
+            font-size: 11px;
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #4a2a2a, #3a1a1a);
+            border: 1px solid #5a3a3a;
+            padding: 4px 14px;
+            font-size: 11px;
+        }
+
+        .report-content {
+            background: #0a121c;
+            border: 1px solid #1f2a35;
+            border-radius: 12px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #b0cef0;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .form-selector {
+            background: #101a24;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #283542;
+        }
+
+        .form-selector .selector-title {
+            font-size: 12px;
+            color: #89b0d4;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .form-selector .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .form-selector .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #0b141f;
+            padding: 6px 8px;
+            border-radius: 10px;
+            border: 1px solid #213141;
+            font-size: 12px;
+            color: #b0cef0;
+        }
+
+        .form-selector .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #4d8cff;
+            cursor: pointer;
+        }
+
+        .form-selector .checkbox-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .form-selector .hint {
+            font-size: 10px;
+            color: #5b7b9a;
+            margin-top: 6px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 460px) {
+            .time-display .main-time { font-size: 26px; }
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-grid-2col { grid-template-columns: 1fr; }
+            .event-form { flex-direction: column; }
+            .event-form .event-time { flex-wrap: wrap; }
+            .chplus-block .value { font-size: 20px; }
+            .report-buttons { flex-direction: column; width: 100%; }
+            .report-buttons .btn { width: 100%; text-align: center; }
+            .jump-input-grid { grid-template-columns: repeat(3, 1fr); }
+            .jump-input-grid-3 { grid-template-columns: repeat(3, 1fr); }
+            .form-selector .checkbox-group { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-card">
+        <div class="header">
+            <h1>⏱ ЧАСЫ «Ч»</h1>
+            <span class="astro-badge" id="astroNowLabel">🌙 --:--:--</span>
+        </div>
+
+        <!-- ВРЕМЯ "Ч" -->
+        <div class="time-block">
+            <div class="label">Время «Ч»</div>
+            <div class="time-display">
+                <span class="main-time" id="chTimeDisplay">00:00:00</span>
+                <span class="alt-time" id="chDateDisplay">00.00.0000</span>
+            </div>
+        </div>
+
+        <!-- ОПЕРАТИВНОЕ ВРЕМЯ -->
+        <div class="time-block" style="border-color: #1a3a4a;">
+            <div class="label">⚡ Оперативное время</div>
+            <div class="time-display">
+                <span class="main-time" id="opTimeDisplay">00:00:00</span>
+                <span class="alt-time" id="opDateDisplay">00.00.0000</span>
+            </div>
+        </div>
+
+        <!-- НАСТРОЙКИ ОРГАНИЗАЦИИ -->
+        <div class="form-grid-full">
+            <div class="form-group">
+                <label>Организация (с номером телефона)</label>
+                <input type="text" id="orgName" value="Уральский институт ГПС МЧС России (тел. 8-343-360-81-40)" />
+            </div>
+        </div>
+
+        <div class="form-grid-2col">
+            <div class="form-group">
+                <label>Подразделение</label>
+                <input type="text" id="department" value="УНК ПиПАСР" />
+            </div>
+            <div class="form-group">
+                <label>Фамилия и инициалы</label>
+                <input type="text" id="signature" value="М.В. Дьяков" />
+            </div>
+        </div>
+
+        <!-- ЗАДАТЬ ВРЕМЯ "Ч" -->
+        <div class="form-grid">
+            <div class="form-group"><label>Год Ч</label><input type="number" id="inputYear" /></div>
+            <div class="form-group"><label>Месяц Ч</label><input type="number" id="inputMonth" min="1" max="12" /></div>
+            <div class="form-group"><label>Число Ч</label><input type="number" id="inputDay" min="1" max="31" /></div>
+            <div class="form-group"><label>Часов Ч</label><input type="number" id="inputHour" min="0" max="23" /></div>
+            <div class="form-group" style="grid-column: span 2;"><label>Минут Ч</label><input type="number" id="inputMinute" min="0" max="59" /></div>
+            <div class="form-group" style="grid-column: span 2;">
+                <button class="btn btn-set" id="setChBtn">📌 Установить Ч</button>
+            </div>
+        </div>
+
+        <!-- ВРЕМЯ ОКОНЧАНИЯ ТРЕНИРОВКИ -->
+        <div class="form-grid">
+            <div class="form-group"><label>Год конца</label><input type="number" id="endYear" /></div>
+            <div class="form-group"><label>Месяц конца</label><input type="number" id="endMonth" min="1" max="12" /></div>
+            <div class="form-group"><label>Число конца</label><input type="number" id="endDay" min="1" max="31" /></div>
+            <div class="form-group"><label>Часов конца</label><input type="number" id="endHour" min="0" max="23" /></div>
+            <div class="form-group" style="grid-column: span 2;"><label>Минут конца</label><input type="number" id="endMinute" min="0" max="59" /></div>
+            <div class="form-group" style="grid-column: span 2;">
+                <button class="btn btn-set" id="setEndBtn">📌 Установить конец</button>
+            </div>
+        </div>
+
+        <!-- ВРЕМЯ Ч+ -->
+        <div class="chplus-block">
+            <span class="label">⏳ Время Ч+</span>
+            <span class="value" id="chPlusDisplay">00:00:00</span>
+        </div>
+
+        <!-- ДОБАВЛЕНИЕ СКАЧКА -->
+        <div class="jump-input-block">
+            <div class="label">📌 ДОБАВИТЬ СКАЧОК</div>
+
+            <div class="jump-section-title">⏰ Когда происходит</div>
+            <div class="jump-input-grid">
+                <div class="form-group"><label>День</label><input type="number" id="jumpDay" min="1" max="31" /></div>
+                <div class="form-group"><label>Мес</label><input type="number" id="jumpMonth" min="1" max="12" /></div>
+                <div class="form-group"><label>Год</label><input type="number" id="jumpYear" /></div>
+                <div class="form-group"><label>Час</label><input type="number" id="jumpHour" min="0" max="23" /></div>
+                <div class="form-group"><label>Мин</label><input type="number" id="jumpMin" min="0" max="59" /></div>
+            </div>
+
+            <div class="jump-section-title">⏩ На сколько сдвигает</div>
+            <div class="jump-input-grid-3">
+                <div class="form-group"><label>Суток</label><input type="number" id="shiftDays" value="0" min="0" /></div>
+                <div class="form-group"><label>Часов</label><input type="number" id="shiftHours" value="0" min="0" /></div>
+                <div class="form-group"><label>Минут</label><input type="number" id="shiftMinutes" value="0" min="0" max="59" /></div>
+            </div>
+
+            <button class="btn btn-add-jump" id="addJumpBtn">➕ Добавить скачок</button>
+        </div>
+
+        <!-- СПИСОК СКАЧКОВ -->
+        <div class="jump-list-block">
+            <div class="jump-list-header">
+                <span class="label">📜 Запланированные скачки</span>
+                <span class="badge-small" id="jumpListCount">0</span>
+            </div>
+            <div class="jump-list" id="jumpList">
+                <div class="jump-list-empty">Нет скачков</div>
+            </div>
+        </div>
+
+        <!-- СБРОС -->
+        <button class="btn-reset" id="resetBtn">⟳ Сброс скачков</button>
+
+        <!-- АСТРОНОМИЧЕСКОЕ ВРЕМЯ -->
+        <div class="astro-block">
+            <span>🌍 Астрономическое</span>
+            <span class="astro-time" id="astroTimeDisplay">--:--:--</span>
+            <span class="badge-small" id="astroDateDisplay">--.--.----</span>
+        </div>
+
+        <!-- МЕРОПРИЯТИЯ -->
+        <div class="events-section">
+            <h2>📋 Мероприятия <span class="count" id="eventsCount">0</span></h2>
+            <div class="event-form">
+                <input type="text" id="eventNameInput" placeholder="Название (1.4.1, 1.5...)" />
+                <div class="event-time">
+                    <input type="number" class="event-days" id="eventDaysInput" placeholder="Дн" value="0" min="0" />
+                    <label>дн</label>
+                    <input type="number" class="event-hours" id="eventHoursInput" placeholder="Ч" value="0" min="0" max="23" />
+                    <label>ч</label>
+                    <input type="number" class="event-minutes" id="eventMinutesInput" placeholder="М" value="0" min="0" max="59" />
+                    <label>мин</label>
+                </div>
+                <button class="btn btn-add-event" id="addEventBtn">➕ Добавить</button>
+            </div>
+            <div class="events-list" id="eventsList"></div>
+            <div class="events-stats">
+                <span>Всего: <strong id="totalEvents">0</strong></span>
+                <span class="pending-count">⏳ Ожидают: <strong id="pendingEvents">0</strong></span>
+                <span class="done-count">✅ Выполнено: <strong id="doneEvents">0</strong></span>
+            </div>
+        </div>
+
+        <!-- ВЫБОР ФОРМ ДОНЕСЕНИЙ -->
+        <div class="form-selector">
+            <div class="selector-title">📑 ВЫБЕРИТЕ ФОРМЫ ДОНЕСЕНИЙ</div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="form1" />
+                    <label for="form1">Форма 1</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="form2" />
+                    <label for="form2">Форма 2</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="form3" />
+                    <label for="form3">Форма 3</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="form4" checked />
+                    <label for="form4">Форма 4</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="form5" checked />
+                    <label for="form5">Форма 5</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="form12" checked />
+                    <label for="form12">Форма 12</label>
+                </div>
+            </div>
+            <div class="hint">
+                Форма 1 — разово (п.3 = Ч, п.4 = Ч + 6 мес.); Форма 2 — периодическая (как форма 5, до конца тренировки); Форма 3 — разово (п.3 = Ч, п.4 = Ч + 6 мес.); Форма 4 — разово (п.3 = Ч, п.4 = Ч + 1 мес.); Форма 5 — периодическая (7 суток в 20:00, далее по воскресеньям в 24:00, до конца тренировки); Форма 12 — по запросу (п.3 = Ч + 1 мес., п.4 = «-»).
+            </div>
+        </div>
+
+        <!-- ДОНЕСЕНИЯ -->
+        <div class="report-section">
+            <h2>
+                📄 Донесения
+                <div class="report-buttons">
+                    <button class="btn btn-report" id="generateReportBtn">🔄 Сформировать</button>
+                    <button class="btn btn-copy" id="copyReportBtn">📋 Копировать</button>
+                    <button class="btn btn-word" id="exportWordBtn">📥 Экспорт в Word</button>
+                    <button class="btn btn-clear" id="clearReportBtn">🗑️ Очистить</button>
+                </div>
+            </h2>
+            <div class="report-content" id="reportContent">Нажмите "Сформировать"</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ─── DOM ───
+            const chTimeDisplay = document.getElementById('chTimeDisplay');
+            const chDateDisplay = document.getElementById('chDateDisplay');
+            const opTimeDisplay = document.getElementById('opTimeDisplay');
+            const opDateDisplay = document.getElementById('opDateDisplay');
+            const chPlusDisplay = document.getElementById('chPlusDisplay');
+            const astroTimeDisplay = document.getElementById('astroTimeDisplay');
+            const astroDateDisplay = document.getElementById('astroDateDisplay');
+            const astroNowLabel = document.getElementById('astroNowLabel');
+
+            const inputYear = document.getElementById('inputYear');
+            const inputMonth = document.getElementById('inputMonth');
+            const inputDay = document.getElementById('inputDay');
+            const inputHour = document.getElementById('inputHour');
+            const inputMinute = document.getElementById('inputMinute');
+
+            const endYear = document.getElementById('endYear');
+            const endMonth = document.getElementById('endMonth');
+            const endDay = document.getElementById('endDay');
+            const endHour = document.getElementById('endHour');
+            const endMinute = document.getElementById('endMinute');
+
+            const jumpDay = document.getElementById('jumpDay');
+            const jumpMonth = document.getElementById('jumpMonth');
+            const jumpYear = document.getElementById('jumpYear');
+            const jumpHour = document.getElementById('jumpHour');
+            const jumpMin = document.getElementById('jumpMin');
+            const shiftDays = document.getElementById('shiftDays');
+            const shiftHours = document.getElementById('shiftHours');
+            const shiftMinutes = document.getElementById('shiftMinutes');
+            const addJumpBtn = document.getElementById('addJumpBtn');
+            const jumpList = document.getElementById('jumpList');
+            const jumpListCount = document.getElementById('jumpListCount');
+
+            const setChBtn = document.getElementById('setChBtn');
+            const setEndBtn = document.getElementById('setEndBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            const eventNameInput = document.getElementById('eventNameInput');
+            const eventDaysInput = document.getElementById('eventDaysInput');
+            const eventHoursInput = document.getElementById('eventHoursInput');
+            const eventMinutesInput = document.getElementById('eventMinutesInput');
+            const addEventBtn = document.getElementById('addEventBtn');
+            const eventsList = document.getElementById('eventsList');
+
+            const totalEvents = document.getElementById('totalEvents');
+            const pendingEvents = document.getElementById('pendingEvents');
+            const doneEvents = document.getElementById('doneEvents');
+            const eventsCount = document.getElementById('eventsCount');
+
+            const reportContent = document.getElementById('reportContent');
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            const copyReportBtn = document.getElementById('copyReportBtn');
+            const exportWordBtn = document.getElementById('exportWordBtn');
+            const clearReportBtn = document.getElementById('clearReportBtn');
+
+            const orgName = document.getElementById('orgName');
+            const department = document.getElementById('department');
+            const signature = document.getElementById('signature');
+
+            const form1Check = document.getElementById('form1');
+            const form2Check = document.getElementById('form2');
+            const form3Check = document.getElementById('form3');
+            const form4Check = document.getElementById('form4');
+            const form5Check = document.getElementById('form5');
+            const form12Check = document.getElementById('form12');
+
+            // ─── Состояние ───
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+            let chTime = today.getTime();
+            // Конец тренировки по умолчанию — Ч + 6 месяцев
+            let endTime = new Date(now.getFullYear(), now.getMonth() + 6, now.getDate(), 0, 0, 0).getTime();
+
+            let jumps = [];
+            let jumpIdCounter = 0;
+
+            let opBase = null;
+            let opBaseReal = null;
+
+            let updateInterval = null;
+            let events = [];
+            let eventIdCounter = 0;
+
+            // ─── Функции ───
+            function pad2(n) { return String(n).padStart(2, '0'); }
+
+            function formatTime(ms) {
+                const d = new Date(ms);
+                return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+            }
+
+            function formatDate(ms) {
+                const d = new Date(ms);
+                return `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()}`;
+            }
+
+            // ⚡ ВРЕМЯ, ПОТОМ ДАТА, БЕЗ СЕКУНД
+            function formatDateTime(ms) {
+                const d = new Date(ms);
+                return `${pad2(d.getHours())}:${pad2(d.getMinutes())} ${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()}`;
+            }
+
+            function formatChPlus(ms) {
+                const absMs = Math.abs(ms);
+                const totalSeconds = Math.floor(absMs / 1000);
+                const days = Math.floor(totalSeconds / 86400);
+                const hours = Math.floor((totalSeconds % 86400) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const sign = ms < 0 ? '-' : '';
+                return `${sign}${days}:${pad2(hours)}:${pad2(minutes)}`;
+            }
+
+            function formatEventTime(days, hours, minutes) {
+                let parts = [];
+                if (days > 0) parts.push(`${days} сут.`);
+                if (hours > 0) parts.push(`${hours} ч.`);
+                if (minutes > 0) parts.push(`${minutes} мин.`);
+                if (parts.length === 0) return '0 мин.';
+                return parts.join(' ');
+            }
+
+            function formatShift(days, hours, minutes) {
+                let parts = [];
+                if (days > 0) parts.push(`${days} сут`);
+                if (hours > 0) parts.push(`${hours} ч`);
+                if (minutes > 0) parts.push(`${minutes} мин`);
+                if (parts.length === 0) return '0 мин';
+                return '+' + parts.join(' ');
+            }
+
+            // ─── ПРИБАВИТЬ МЕСЯЦЫ ───
+            function getPlusMonths(ms, months) {
+                const d = new Date(ms);
+                d.setMonth(d.getMonth() + months);
+                return d.getTime();
+            }
+
+            // ─── Ч + 1 МЕСЯЦ ───
+            function getPlusMonth(ms) {
+                return getPlusMonths(ms, 1);
+            }
+
+            function computeJumpsWithOp() {
+                const sorted = [...jumps].sort((a, b) => a.when - b.when);
+                const result = [];
+                let prevOp = null;
+                let prevWhen = null;
+
+                sorted.forEach((jump, index) => {
+                    let opAfter;
+                    if (index === 0) {
+                        opAfter = jump.when + jump.shiftMs;
+                    } else {
+                        const gap = jump.when - prevWhen;
+                        opAfter = prevOp + gap + jump.shiftMs;
+                    }
+                    result.push({ ...jump, opAfter });
+                    prevOp = opAfter;
+                    prevWhen = jump.when;
+                });
+
+                return result;
+            }
+
+            function recalcOpBase() {
+                if (jumps.length === 0) {
+                    opBase = null;
+                    opBaseReal = null;
+                    return;
+                }
+                const computed = computeJumpsWithOp();
+                const sortedByAdded = [...computed].sort((a, b) => b.addedAt - a.addedAt);
+                const last = sortedByAdded[0];
+                opBase = last.opAfter;
+                opBaseReal = last.addedAt;
+            }
+
+            function getOpTime() {
+                if (opBase === null || opBaseReal === null) {
+                    return Date.now();
+                }
+                return opBase + (Date.now() - opBaseReal);
+            }
+
+            function getChPlusMs() {
+                return getOpTime() - chTime;
+            }
+
+            function getEventOffsetMs(event) {
+                return ((event.days * 24 + event.hours) * 60 + event.minutes) * 60 * 1000;
+            }
+
+            function getEventStatus(event) {
+                const eventTime = chTime + getEventOffsetMs(event);
+                return getOpTime() >= eventTime ? 'done' : 'pending';
+            }
+
+            function updateAll() {
+                const nowMs = Date.now();
+                const opTime = getOpTime();
+                const chPlusMs = getChPlusMs();
+
+                chTimeDisplay.textContent = formatTime(chTime);
+                chDateDisplay.textContent = formatDate(chTime);
+
+                opTimeDisplay.textContent = formatTime(opTime);
+                opDateDisplay.textContent = formatDate(opTime);
+
+                chPlusDisplay.textContent = formatChPlus(chPlusMs);
+
+                astroTimeDisplay.textContent = formatTime(nowMs);
+                astroDateDisplay.textContent = formatDate(nowMs);
+                astroNowLabel.textContent = `🌙 ${formatTime(nowMs)}`;
+
+                renderEvents();
+                renderJumpList();
+            }
+
+            function startUpdateTimer() {
+                if (updateInterval) clearInterval(updateInterval);
+                updateInterval = setInterval(updateAll, 100);
+            }
+
+            function setChTimeFromForm() {
+                const year = parseInt(inputYear.value) || now.getFullYear();
+                const month = (parseInt(inputMonth.value) || now.getMonth() + 1) - 1;
+                const day = parseInt(inputDay.value) || now.getDate();
+                const hour = parseInt(inputHour.value) || 0;
+                const minute = parseInt(inputMinute.value) || 0;
+
+                const newCh = new Date(year, month, day, hour, minute, 0);
+                if (isNaN(newCh.getTime())) {
+                    alert('Некорректная дата!');
+                    return;
+                }
+
+                chTime = newCh.getTime();
+                recalcOpBase();
+                updateAll();
+                saveState();
+            }
+
+            function setEndTimeFromForm() {
+                const year = parseInt(endYear.value) || now.getFullYear();
+                const month = (parseInt(endMonth.value) || now.getMonth() + 1) - 1;
+                const day = parseInt(endDay.value) || now.getDate() + 180;
+                const hour = parseInt(endHour.value) || 0;
+                const minute = parseInt(endMinute.value) || 0;
+
+                const newEnd = new Date(year, month, day, hour, minute, 0);
+                if (isNaN(newEnd.getTime())) {
+                    alert('Некорректная дата окончания!');
+                    return;
+                }
+
+                endTime = newEnd.getTime();
+                updateAll();
+                saveState();
+            }
+
+            function addJump() {
+                const day = parseInt(jumpDay.value);
+                const month = parseInt(jumpMonth.value);
+                const year = parseInt(jumpYear.value);
+                const hour = parseInt(jumpHour.value);
+                const min = parseInt(jumpMin.value);
+
+                const sDays = parseInt(shiftDays.value) || 0;
+                const sHours = parseInt(shiftHours.value) || 0;
+                const sMinutes = parseInt(shiftMinutes.value) || 0;
+
+                if (!day || !month || !year || isNaN(hour) || isNaN(min)) {
+                    alert('Заполните дату и время скачка');
+                    return;
+                }
+
+                if (month < 1 || month > 12 || day < 1 || day > 31) {
+                    alert('Некорректная дата');
+                    return;
+                }
+
+                if (hour < 0 || hour > 23 || min < 0 || min > 59) {
+                    alert('Часы 0–23, минуты 0–59');
+                    return;
+                }
+
+                if (sDays < 0 || sHours < 0 || sMinutes < 0) {
+                    alert('Сдвиг не может быть отрицательным');
+                    return;
+                }
+
+                if (sMinutes > 59) {
+                    alert('Минуты сдвига не более 59');
+                    return;
+                }
+
+                const whenDate = new Date(year, month - 1, day, hour, min, 0);
+                if (isNaN(whenDate.getTime())) {
+                    alert('Некорректная дата скачка');
+                    return;
+                }
+
+                const shiftMs = ((sDays * 24 + sHours) * 60 + sMinutes) * 60 * 1000;
+
+                if (shiftMs === 0) {
+                    alert('Величина сдвига должна быть больше нуля');
+                    return;
+                }
+
+                if (jumps.some(j => j.when === whenDate.getTime())) {
+                    alert('Такой скачок уже добавлен!');
+                    return;
+                }
+
+                jumps.push({
+                    id: ++jumpIdCounter,
+                    when: whenDate.getTime(),
+                    shiftMs: shiftMs,
+                    shiftDays: sDays,
+                    shiftHours: sHours,
+                    shiftMinutes: sMinutes,
+                    addedAt: Date.now()
+                });
+
+                recalcOpBase();
+
+                jumpDay.value = '';
+                jumpMonth.value = '';
+                jumpYear.value = '';
+                jumpHour.value = '';
+                jumpMin.value = '';
+                shiftDays.value = '0';
+                shiftHours.value = '0';
+                shiftMinutes.value = '0';
+
+                updateAll();
+                saveState();
+            }
+
+            function deleteJump(id) {
+                if (!confirm('Удалить этот скачок?')) return;
+                jumps = jumps.filter(j => j.id !== id);
+                recalcOpBase();
+                updateAll();
+                saveState();
+            }
+
+            function resetJumps() {
+                if (!confirm('Очистить список скачков?')) return;
+                jumps = [];
+                opBase = null;
+                opBaseReal = null;
+                updateAll();
+                saveState();
+            }
+
+            function addEvent() {
+                const name = eventNameInput.value.trim();
+                const days = parseInt(eventDaysInput.value) || 0;
+                const hours = parseInt(eventHoursInput.value) || 0;
+                const minutes = parseInt(eventMinutesInput.value) || 0;
+
+                if (!name) {
+                    alert('Введите название мероприятия');
+                    return;
+                }
+
+                if (days < 0 || hours < 0 || minutes < 0) {
+                    alert('Время не может быть отрицательным');
+                    return;
+                }
+
+                if (hours > 23 || minutes > 59) {
+                    alert('Часы не более 23, минуты не более 59');
+                    return;
+                }
+
+                const exists = events.some(e => e.name === name && e.days === days && e.hours === hours && e.minutes === minutes);
+                if (exists) {
+                    alert('Такое мероприятие уже существует!');
+                    return;
+                }
+
+                events.push({
+                    id: ++eventIdCounter,
+                    name: name,
+                    days: days,
+                    hours: hours,
+                    minutes: minutes
+                });
+
+                eventNameInput.value = '';
+                eventDaysInput.value = '0';
+                eventHoursInput.value = '0';
+                eventMinutesInput.value = '0';
+                updateAll();
+                saveState();
+            }
+
+            function deleteEvent(id) {
+                if (!confirm('Удалить мероприятие?')) return;
+                events = events.filter(e => e.id !== id);
+                updateAll();
+                saveState();
+            }
+
+            function renderEvents() {
+                const sorted = [...events].sort((a, b) => {
+                    const offsetA = getEventOffsetMs(a);
+                    const offsetB = getEventOffsetMs(b);
+                    return offsetA - offsetB;
+                });
+
+                let html = '';
+                let doneCount = 0,
+                    pendingCount = 0;
+
+                sorted.forEach(event => {
+                    const status = getEventStatus(event);
+                    const isDone = status === 'done';
+                    const eventTime = chTime + getEventOffsetMs(event);
+
+                    if (isDone) doneCount++;
+                    else pendingCount++;
+
+                    html += `
+                        <div class="event-item ${isDone ? 'done' : ''}">
+                            <div class="event-info">
+                                <div class="event-name">${escapeHtml(event.name)}</div>
+                                <div class="event-days">📅 Ч + <span>${formatEventTime(event.days, event.hours, event.minutes)}</span></div>
+                                <div class="event-deadline">⏰ Срок: <span>${formatDateTime(eventTime)}</span></div>
+                            </div>
+                            <span class="event-status ${isDone ? 'done-status' : 'pending'}">${isDone ? '✅ Выполнено' : '⏳ Ожидает'}</span>
+                            <button class="btn-delete-event" onclick="window.deleteEvent(${event.id})">🗑️</button>
+                        </div>
+                    `;
+                });
+
+                if (events.length === 0) {
+                    html = `<div style="text-align:center;color:#5b7b9a;padding:20px;">Нет мероприятий</div>`;
+                }
+
+                eventsList.innerHTML = html;
+                totalEvents.textContent = events.length;
+                pendingEvents.textContent = pendingCount;
+                doneEvents.textContent = doneCount;
+                eventsCount.textContent = events.length;
+            }
+
+            function renderJumpList() {
+                jumpListCount.textContent = jumps.length;
+
+                if (jumps.length === 0) {
+                    jumpList.innerHTML = '<div class="jump-list-empty">Нет скачков</div>';
+                    return;
+                }
+
+                const computed = computeJumpsWithOp();
+
+                let html = '';
+                computed.forEach((jump, index) => {
+                    const chplus = jump.opAfter - chTime;
+
+                    html += `
+                        <div class="jump-list-item">
+                            <button class="btn-del-jump" onclick="window.deleteJump(${jump.id})">🗑</button>
+                            <div class="ji-row">
+                                <span class="ji-num">${index + 1}. Скачок:</span>
+                                <span class="ji-when">${formatDateTime(jump.when)}</span>
+                            </div>
+                            <div class="ji-row">
+                                <span>Сдвиг:</span>
+                                <span class="ji-shift">${formatShift(jump.shiftDays, jump.shiftHours, jump.shiftMinutes)}</span>
+                            </div>
+                            <div class="ji-row">
+                                <span>Оперативное после:</span>
+                                <span class="ji-op">${formatDateTime(jump.opAfter)}</span>
+                            </div>
+                            <div class="ji-row">
+                                <span>Ч+:</span>
+                                <span class="ji-chplus">${formatChPlus(chplus)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                jumpList.innerHTML = html;
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // ═══════════════════════════════════════════════════════
+            // ГЕНЕРАЦИЯ ДОНЕСЕНИЙ
+            // ═══════════════════════════════════════════════════════
+            function generateReport() {
+                const org = orgName.value || 'Уральский институт ГПС МЧС России';
+                const dep = department.value || 'УНК ПиПАСР';
+                const sign = signature.value || 'М.В. Дьяков';
+
+                const sep = '═'.repeat(60);
+                let report = '';
+
+                // ─── ФОРМА 1 — разово (п.3 = Ч, п.4 = Ч + 6 мес.) ───
+                if (form1Check.checked) {
+                    const planDeadline = getPlusMonths(chTime, 6);
+                    report += `${sep}\n`;
+                    report += `📄 ДОНЕСЕНИЕ ПО ФОРМЕ 1\n`;
+                    report += `${sep}\n`;
+                    report += `Адрес: ${org}\n`;
+                    report += `Текст:\n`;
+                    report += `1. 1;\n`;
+                    report += `2. ${dep};\n`;
+                    report += `3. ${formatDateTime(chTime)};\n`;
+                    report += `4. ${formatDateTime(planDeadline)};\n`;
+                    report += `5. __________________ ${sign}\n\n`;
+                }
+
+                // ─── ФОРМА 2 — периодическая (как форма 5, до конца тренировки) ───
+                if (form2Check.checked) {
+                    const dates = getPeriodicReportDates();
+                    if (dates.length > 0) {
+                        report += `${sep}\n`;
+                        report += `📄 ДОНЕСЕНИЯ ПО ФОРМЕ 2 (периодические)\n`;
+                        report += `${sep}\n`;
+                        dates.forEach((d, i) => {
+                            report += `--- Донесение №${i + 1} ---\n`;
+                            report += `Адрес: ${org}\n`;
+                            report += `Текст:\n`;
+                            report += `1. 2;\n`;
+                            report += `2. ${dep};\n`;
+                            report += `3. ${d.displayTime};\n`;
+                            report += `4. ${getDoneEventsForTime(d.reportTime) || '-'};\n`;
+                            report += `5. ${getPendingEventsForTime(d.reportTime) || '-'};\n`;
+                            report += `6. -;\n`;
+                            report += `7. __________________ ${sign}\n\n`;
+                        });
+                    }
+                }
+
+                // ─── ФОРМА 3 — разово (п.3 = Ч, п.4 = Ч + 6 мес.) ───
+                if (form3Check.checked) {
+                    const planDeadline = getPlusMonths(chTime, 6);
+                    report += `${sep}\n`;
+                    report += `📄 ДОНЕСЕНИЕ ПО ФОРМЕ 3\n`;
+                    report += `${sep}\n`;
+                    report += `Адрес: ${org}\n`;
+                    report += `Текст:\n`;
+                    report += `1. 3;\n`;
+                    report += `2. ${dep};\n`;
+                    report += `3. ${formatDateTime(chTime)};\n`;
+                    report += `4. ${formatDateTime(planDeadline)};\n`;
+                    report += `5. __________________ ${sign}\n\n`;
+                }
+
+                // ─── ФОРМА 4 — разово (п.3 = Ч, п.4 = Ч + 1 мес.) ───
+                if (form4Check.checked) {
+                    const planDeadline = getPlusMonth(chTime);
+                    report += `${sep}\n`;
+                    report += `📄 ДОНЕСЕНИЕ ПО ФОРМЕ 4\n`;
+                    report += `${sep}\n`;
+                    report += `Адрес: ${org}\n`;
+                    report += `Текст:\n`;
+                    report += `1. 4;\n`;
+                    report += `2. ${dep};\n`;
+                    report += `3. ${formatDateTime(chTime)};\n`;
+                    report += `4. ${formatDateTime(planDeadline)};\n`;
+                    report += `5. __________________ ${sign}\n\n`;
+                }
+
+                // ─── ФОРМА 5 — периодическая (до конца тренировки) ───
+                if (form5Check.checked) {
+                    const dates = getPeriodicReportDates();
+                    if (dates.length > 0) {
+                        report += `${sep}\n`;
+                        report += `📄 ДОНЕСЕНИЯ ПО ФОРМЕ 5 (периодические)\n`;
+                        report += `${sep}\n`;
+                        dates.forEach((d, i) => {
+                            report += `--- Донесение №${i + 1} ---\n`;
+                            report += `Адрес: ${org}\n`;
+                            report += `Текст:\n`;
+                            report += `1. 5;\n`;
+                            report += `2. ${dep};\n`;
+                            report += `3. ${d.displayTime};\n`;
+                            report += `4. ${getDoneEventsForTime(d.reportTime) || '-'};\n`;
+                            report += `5. ${getPendingEventsForTime(d.reportTime) || '-'};\n`;
+                            report += `6. -;\n`;
+                            report += `7. __________________ ${sign}\n\n`;
+                        });
+                    }
+                }
+
+                // ─── ФОРМА 12 — по запросу (п.3 = Ч + 1 мес., п.4 = «-») ───
+                if (form12Check.checked) {
+                    const planDeadline = getPlusMonth(chTime);
+                    report += `${sep}\n`;
+                    report += `📄 ДОНЕСЕНИЕ ПО ФОРМЕ 12\n`;
+                    report += `${sep}\n`;
+                    report += `Адрес: ${org}\n`;
+                    report += `Текст:\n`;
+                    report += `1. 12;\n`;
+                    report += `2. ${dep};\n`;
+                    report += `3. ${formatDateTime(planDeadline)};\n`;
+                    report += `4. -;\n`;
+                    report += `5. __________________ ${sign}\n\n`;
+                }
+
+                if (report === '') {
+                    report = 'Не выбрано ни одной формы донесения.';
+                }
+
+                reportContent.textContent = report;
+            }
+
+            // ═══════════════════════════════════════════════════════
+            // ПЕРИОДИЧЕСКИЕ ДАТЫ (Форма 2 и Форма 5) — до endTime
+            // ═══════════════════════════════════════════════════════
+            function getPeriodicReportDates() {
+                const result = [];
+                const chDate = new Date(chTime);
+
+                // ─── 1) Первые 7 суток: ежедневно в 20:00, начиная с дня Ч ───
+                for (let i = 0; i < 7; i++) {
+                    const day = new Date(chDate);
+                    day.setDate(day.getDate() + i);
+                    day.setHours(20, 0, 0, 0);
+
+                    const reportTime = day.getTime();
+
+                    if (reportTime >= chTime && reportTime <= endTime) {
+                        result.push({
+                            reportTime: reportTime,
+                            displayTime: formatDateTime(reportTime),
+                            type: 'daily'
+                        });
+                    }
+                }
+
+                // ─── 2) Далее: по воскресеньям в 24:00 ───
+                const startDate = new Date(chDate);
+                startDate.setDate(startDate.getDate() + 7);
+                startDate.setHours(0, 0, 0, 0);
+
+                let current = new Date(startDate);
+                while (current.getDay() !== 0) {
+                    current.setDate(current.getDate() + 1);
+                }
+
+                while (current.getTime() <= endTime) {
+                    const sunday = new Date(current);
+                    sunday.setHours(0, 0, 0, 0);
+                    const sundayStr = `24:00 ${formatDate(sunday.getTime())}`;
+
+                    const reportTime = sunday.getTime() + 24 * 3600 * 1000;
+
+                    if (reportTime >= chTime && reportTime <= endTime) {
+                        result.push({
+                            reportTime: reportTime,
+                            displayTime: sundayStr,
+                            type: 'weekly'
+                        });
+                    }
+
+                    current.setDate(current.getDate() + 7);
+                }
+
+                result.sort((a, b) => a.reportTime - b.reportTime);
+                return result;
+            }
+
+            function getDoneEventsForTime(time) {
+                return events
+                    .filter(e => (chTime + getEventOffsetMs(e)) <= time)
+                    .map(e => e.name)
+                    .join(', ');
+            }
+
+            function getPendingEventsForTime(time) {
+                return events
+                    .filter(e => (chTime + getEventOffsetMs(e)) > time)
+                    .map(e => e.name)
+                    .join(', ');
+            }
+
+            function clearReport() {
+                reportContent.textContent = 'Нажмите "Сформировать"';
+            }
+
+            function copyReport() {
+                const text = reportContent.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Донесения скопированы!');
+                }).catch(() => {
+                    const range = document.createRange();
+                    range.selectNode(reportContent);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    document.execCommand('copy');
+                    alert('Донесения скопированы!');
+                });
+            }
+
+            // ═══════════════════════════════════════════════════════
+            // ЭКСПОРТ В WORD
+            // ═══════════════════════════════════════════════════════
+            function exportToWord() {
+                const org = orgName.value || 'Уральский институт ГПС МЧС России';
+                const dep = department.value || 'УНК ПиПАСР';
+                const sign = signature.value || 'М.В. Дьяков';
+
+                let html = `
+                    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                          xmlns:w="urn:schemas-microsoft-com:office:word"
+                          xmlns="http://www.w3.org/TR/REC-html40">
+                    <head>
+                        <meta charset="utf-8">
+                        <title>Донесения</title>
+                        <style>
+                            body {
+                                font-family: 'Times New Roman', Times, serif;
+                                font-size: 14pt;
+                                line-height: 1.4;
+                                margin: 2cm 2cm 2cm 2cm;
+                            }
+                            p {
+                                margin: 0 0 4pt 0;
+                            }
+                            .addr {
+                                margin-bottom: 6pt;
+                            }
+                            .block {
+                                margin-bottom: 18pt;
+                            }
+                            .sign {
+                                margin-top: 4pt;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                `;
+
+                // ─── ФОРМА 1 ───
+                if (form1Check.checked) {
+                    const planDeadline = getPlusMonths(chTime, 6);
+                    html += `<div class="block">`;
+                    html += `<p class="addr">Адрес: ${org}</p>`;
+                    html += `<p>1. 1;</p>`;
+                    html += `<p>2. ${dep};</p>`;
+                    html += `<p>3. ${formatDateTime(chTime)};</p>`;
+                    html += `<p>4. ${formatDateTime(planDeadline)};</p>`;
+                    html += `<p class="sign">5. __________________ ${sign}</p>`;
+                    html += `</div>`;
+                }
+
+                // ─── ФОРМА 2 ───
+                if (form2Check.checked) {
+                    const dates = getPeriodicReportDates();
+                    dates.forEach((d) => {
+                        html += `<div class="block">`;
+                        html += `<p class="addr">Адрес: ${org}</p>`;
+                        html += `<p>1. 2;</p>`;
+                        html += `<p>2. ${dep};</p>`;
+                        html += `<p>3. ${d.displayTime};</p>`;
+                        html += `<p>4. ${getDoneEventsForTime(d.reportTime) || '-'};</p>`;
+                        html += `<p>5. ${getPendingEventsForTime(d.reportTime) || '-'};</p>`;
+                        html += `<p>6. -;</p>`;
+                        html += `<p class="sign">7. __________________ ${sign}</p>`;
+                        html += `</div>`;
+                    });
+                }
+
+                // ─── ФОРМА 3 ───
+                if (form3Check.checked) {
+                    const planDeadline = getPlusMonths(chTime, 6);
+                    html += `<div class="block">`;
+                    html += `<p class="addr">Адрес: ${org}</p>`;
+                    html += `<p>1. 3;</p>`;
+                    html += `<p>2. ${dep};</p>`;
+                    html += `<p>3. ${formatDateTime(chTime)};</p>`;
+                    html += `<p>4. ${formatDateTime(planDeadline)};</p>`;
+                    html += `<p class="sign">5. __________________ ${sign}</p>`;
+                    html += `</div>`;
+                }
+
+                // ─── ФОРМА 4 ───
+                if (form4Check.checked) {
+                    const planDeadline = getPlusMonth(chTime);
+                    html += `<div class="block">`;
+                    html += `<p class="addr">Адрес: ${org}</p>`;
+                    html += `<p>1. 4;</p>`;
+                    html += `<p>2. ${dep};</p>`;
+                    html += `<p>3. ${formatDateTime(chTime)};</p>`;
+                    html += `<p>4. ${formatDateTime(planDeadline)};</p>`;
+                    html += `<p class="sign">5. __________________ ${sign}</p>`;
+                    html += `</div>`;
+                }
+
+                // ─── ФОРМА 5 ───
+                if (form5Check.checked) {
+                    const dates = getPeriodicReportDates();
+                    dates.forEach((d) => {
+                        html += `<div class="block">`;
+                        html += `<p class="addr">Адрес: ${org}</p>`;
+                        html += `<p>1. 5;</p>`;
+                        html += `<p>2. ${dep};</p>`;
+                        html += `<p>3. ${d.displayTime};</p>`;
+                        html += `<p>4. ${getDoneEventsForTime(d.reportTime) || '-'};</p>`;
+                        html += `<p>5. ${getPendingEventsForTime(d.reportTime) || '-'};</p>`;
+                        html += `<p>6. -;</p>`;
+                        html += `<p class="sign">7. __________________ ${sign}</p>`;
+                        html += `</div>`;
+                    });
+                }
+
+                // ─── ФОРМА 12 ───
+                if (form12Check.checked) {
+                    const planDeadline = getPlusMonth(chTime);
+                    html += `<div class="block">`;
+                    html += `<p class="addr">Адрес: ${org}</p>`;
+                    html += `<p>Текст:</p>`;
+                    html += `<p>1. 12;</p>`;
+                    html += `<p>2. ${dep};</p>`;
+                    html += `<p>3. ${formatDateTime(planDeadline)};</p>`;
+                    html += `<p>4. -;</p>`;
+                    html += `<p class="sign">5. __________________ ${sign}</p>`;
+                    html += `</div>`;
+                }
+
+                html += `</body></html>`;
+
+                // Создаём .doc-файл (HTML, совместимый с Word)
+                const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Донесение_${formatDate(Date.now()).replace(/\./g, '-')}.doc`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+
+            function saveState() {
+                try {
+                    const state = {
+                        chTime,
+                        endTime,
+                        jumps,
+                        jumpIdCounter,
+                        opBase,
+                        opBaseReal,
+                        events,
+                        eventIdCounter,
+                        orgName: orgName.value,
+                        department: department.value,
+                        signature: signature.value,
+                        form1: form1Check.checked,
+                        form2: form2Check.checked,
+                        form3: form3Check.checked,
+                        form4: form4Check.checked,
+                        form5: form5Check.checked,
+                        form12: form12Check.checked
+                    };
+                    localStorage.setItem('chasyState', JSON.stringify(state));
+                } catch (e) {}
+            }
+
+            function loadState() {
+                try {
+                    const data = localStorage.getItem('chasyState');
+                    if (!data) return false;
+                    const state = JSON.parse(data);
+                    chTime = state.chTime || new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
+                    endTime = state.endTime || new Date(now.getFullYear(), now.getMonth() + 6, now.getDate(), 0, 0, 0).getTime();
+                    jumps = state.jumps || [];
+                    jumpIdCounter = state.jumpIdCounter || 0;
+                    opBase = state.opBase !== undefined ? state.opBase : null;
+                    opBaseReal = state.opBaseReal !== undefined ? state.opBaseReal : null;
+                    events = state.events || [];
+                    eventIdCounter = state.eventIdCounter || 0;
+                    if (state.orgName) orgName.value = state.orgName;
+                    if (state.department) department.value = state.department;
+                    if (state.signature) signature.value = state.signature;
+                    if (state.form1 !== undefined) form1Check.checked = state.form1;
+                    if (state.form2 !== undefined) form2Check.checked = state.form2;
+                    if (state.form3 !== undefined) form3Check.checked = state.form3;
+                    if (state.form4 !== undefined) form4Check.checked = state.form4;
+                    if (state.form5 !== undefined) form5Check.checked = state.form5;
+                    if (state.form12 !== undefined) form12Check.checked = state.form12;
+
+                    if (jumps.length > 0 && (opBase === null || opBaseReal === null)) {
+                        recalcOpBase();
+                    }
+                    return true;
+                } catch (e) { return false; }
+            }
+
+            function init() {
+                loadState();
+
+                const chDate = new Date(chTime);
+                inputYear.value = chDate.getFullYear();
+                inputMonth.value = chDate.getMonth() + 1;
+                inputDay.value = chDate.getDate();
+                inputHour.value = chDate.getHours();
+                inputMinute.value = chDate.getMinutes();
+
+                const endDate = new Date(endTime);
+                endYear.value = endDate.getFullYear();
+                endMonth.value = endDate.getMonth() + 1;
+                endDay.value = endDate.getDate();
+                endHour.value = endDate.getHours();
+                endMinute.value = endDate.getMinutes();
+
+                setChBtn.addEventListener('click', setChTimeFromForm);
+                setEndBtn.addEventListener('click', setEndTimeFromForm);
+                addJumpBtn.addEventListener('click', addJump);
+                resetBtn.addEventListener('click', resetJumps);
+                addEventBtn.addEventListener('click', addEvent);
+                generateReportBtn.addEventListener('click', generateReport);
+                copyReportBtn.addEventListener('click', copyReport);
+                exportWordBtn.addEventListener('click', exportToWord);
+                clearReportBtn.addEventListener('click', clearReport);
+
+                eventNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') addEvent(); });
+                eventDaysInput.addEventListener('keydown', e => { if (e.key === 'Enter') addEvent(); });
+                eventHoursInput.addEventListener('keydown', e => { if (e.key === 'Enter') addEvent(); });
+                eventMinutesInput.addEventListener('keydown', e => { if (e.key === 'Enter') addEvent(); });
+
+                orgName.addEventListener('change', saveState);
+                department.addEventListener('change', saveState);
+                signature.addEventListener('change', saveState);
+
+                form1Check.addEventListener('change', saveState);
+                form2Check.addEventListener('change', saveState);
+                form3Check.addEventListener('change', saveState);
+                form4Check.addEventListener('change', saveState);
+                form5Check.addEventListener('change', saveState);
+                form12Check.addEventListener('change', saveState);
+
+                window.deleteEvent = deleteEvent;
+                window.deleteJump = deleteJump;
+
+                setInterval(saveState, 3000);
+                updateAll();
+                startUpdateTimer();
+
+                setTimeout(generateReport, 500);
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
